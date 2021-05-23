@@ -1,6 +1,7 @@
 {
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "test": "node C:/Users/Reptile25/Desktop/projects/social-media-backend/test.js"
   },
   "dependencies": {
     "axios": "^0.21.1",
