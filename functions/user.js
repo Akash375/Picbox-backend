@@ -1,4 +1,4 @@
-const { Users } = require("../db");
+const { Users, Posts } = require("../db");
 
 const followUser = async (req) => {
     try{
@@ -81,6 +81,7 @@ const findUser = async (req) => {
         return { status: 200, user: user, posts: posts };
     }
     catch(err){
+        console.log(err);
         return { status: 500, message: "Something went wrong!" };
     }
 }

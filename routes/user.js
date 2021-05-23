@@ -23,7 +23,7 @@ router.post("/edit", async (req, res) => {
     res.status(response.status).send(response);
 })
 
-router.post("/profile", async (req, res) => {
+router.get("/profile", async (req, res) => {
     const response = await functions.findUser(req); 
     res.status(response.status).send(response);
 })

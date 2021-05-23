@@ -16,10 +16,12 @@ app.use(cors({
 
 app.use(async (req, res, next) => {
     try{
-        await firebase.auth().verifyIdToken(req.headers.idToken);
+        const decodedToken = await firebase.auth().verifyIdToken(req.headers.idtoken);
+        req.body.userId = decodedToken.uid;
         next();
     }
     catch(err){
+        console.log(err);
         res.status(401).send({ status: 401, message: "Id dekh le be"});
     }
     
