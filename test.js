@@ -1,7 +1,7 @@
 const axios = require("axios")
 
 const data = {
-    
+
 }
 
 axios.get("http://localhost:3001/")
@@ -9,5 +9,5 @@ axios.get("http://localhost:3001/")
     console.log(res.data);
 })
 .catch((err) => {
-    console.log(err);
+    console.log(err.response.data);
 })
