@@ -1,12 +1,24 @@
-const express= require("express");
-const bodyParser=require("body-parser");
-const mongoose=require("mongoose");
+const express = require("express");
+const dotenv = require("dotenv")
+const mongoose =require("mongoose");
 const cors = require("cors");
+
+dotenv.config();
 
 const app=express();
 
-mongoose.connect("mongodb+srv://akash:socialmedia@cluster0.lvxae.mongodb.net/socialMedia?retryWrites=true&w=majority", 
-    {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false});
+app.use(express.json());
+
+app.use(cors({
+    origin: 'http://localhost:3000'
+}));
+
+
+mongoose.connect( process.env.DB_URL, {
+    useNewUrlParser: true, 
+    useUnifiedTopology: true, 
+    useFindAndModify: false
+});
 
 
 const userSchema = {
@@ -39,13 +51,6 @@ const commentSchema = {
 const Users = mongoose.model("User", userSchema);
 const Posts = mongoose.model("Post", postSchema);
 const Comments = mongoose.model("Comment", commentSchema);
-
-app.use(bodyParser.urlencoded({extended: true}));
-app.use(bodyParser.json());
-
-app.use(cors({
-    origin: 'http://localhost:3000'
-}));
 
 app.get("/", (req, res) => {
     res.send("working");
@@ -227,6 +232,6 @@ app.post("/post/edit", async (req, res) => {
     res.status(200).send({status: 200, message: "Post edited!"});
 })
 
-app.listen(process.env.PORT || 9000, function(){
-    console.log("server is running on port 9000");
+app.listen(process.env.PORT, function(){
+    console.log(`server is running on port ${process.env.PORT}`);
 });
