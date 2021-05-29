@@ -10,6 +10,9 @@ mongoose.connect( process.env.DB_URL, {
 });
 
 const userSchema = {
+    email: String,
+    password: String,
+    refreshToken: String,
     userId: String,
     name: String,
     username: String,
