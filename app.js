@@ -3,6 +3,7 @@ const cors = require("cors");
 const dotenv = require("dotenv");
 const firebase = require("./firebase");
 const routes = require("./routes");
+const fs = require('fs');
 
 dotenv.config();
 
@@ -15,22 +16,6 @@ app.use(cors({
     credentials: true,
 }));
 
-// app.use(async (req, res, next) => {
-//     try{
-//         const decodedToken = await firebase.auth().verifyIdToken(req.headers.idtoken);
-//         req.body.userId = decodedToken.uid;
-//         next();
-//     }
-//     catch(err){
-//         console.log(err);
-//         res.status(401).send({ status: 401, message: "Id dekh le be"});
-//     }
-    
-// });
-
-app.get("/", (req, res) => {
-    res.send("working");
-})
 
 app.use("/user", routes.user);
 app.use("/comment", routes.comment);

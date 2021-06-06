@@ -1,5 +1,14 @@
 const express = require("express");
 const router = express.Router();
+const multer = require('multer');
+const functions = require("../functions/post"); 
+
+const uploader = multer({
+    storage: multer.memoryStorage(),
+    limits: {
+        fileSize: 5 * 1024 * 1024, // keep images size < 5 MB
+    },
+});
 
 router.post("/like", async (req, res) => {
     const response = await functions.likePost(req); 
@@ -11,7 +20,7 @@ router.post("/unlike", async (req, res) => {
     res.status(response.status).send(response);
 })
 
-router.post("/add", async (req, res) => {
+router.post("/add", uploader.single('file'), async (req, res) => {
     const response = await functions.addPost(req);
     res.status(response.status).send(response);
 })
