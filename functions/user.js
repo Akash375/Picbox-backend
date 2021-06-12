@@ -1,12 +1,13 @@
 const { Users, Posts } = require("../db");
+const { upload, del } = require('./helper');
 
 const followUser = async (req) => {
     try{
         const {hostId, targetId} = req.body;
-        const host = await Users.findOne({userId: hostId});
+        const host = await Users.findOne({username: hostId});
         host.following.push(targetId);
         await host.save();
-        const target = await Users.findOne({userId: targetId});
+        const target = await Users.findOne({username: targetId});
         target.followers.push(hostId);
         await target.save();
         return { status: 200, message: "User followed!"};
@@ -19,12 +20,12 @@ const followUser = async (req) => {
 const unfollowUser = async (req) => {
     try{
         const { hostId, targetId } = req.body;
-        const host = await Users.findOne({userId: hostId});
+        const host = await Users.findOne({username: hostId});
         host.following = host.following.filter((value) => {
             return value != targetId;
         });
         await host.save()
-        const target = await Users.findOne({userId: targetId});
+        const target = await Users.findOne({username: targetId});
         target.followers = target.followers.filter((value) => {
             return value != hostId;
         });
@@ -58,26 +59,28 @@ const createUser = async (req) => {
 
 const editUser = async (req) => {
     try{
-        const {userId, username, name, bio, profileImg} = req.body;
-        const user = await Users.findOne({userId: userId});
-        user.username = username;
-        user.name = name;
-        user.bio = bio;
-        const prevImg = user.profileImg !== profileImg ? user.profileImg : null;
-        user.profileImg = profileImg;
+        const { username } = req.body;
+        const user = await Users.findOne({ username: username });
+        if (user.profileImg) {
+            await del(user.profileImg)
+        }
+        const response = await upload(req);
+        user.profileImg = response.fileLocation
         await user.save();
-        return { status: 200, message: "User data edited", imgUrl: prevImg }
+        return { status: 200, message: "User data edited"}
     }
     catch(err){
+        console.log(err);
         return { status: 500, message: "Something went wrong!" };
     }
 }
 
 const findUser = async (req) => {
     try{
-        const {userId} = req.body;
-        const user = await Users.findOne({userId: userId});
-        const posts = await Posts.find({author: userId});
+        const { username } = req.body;
+        // console.log(username);
+        const user = await Users.findOne({username: username}, {password: 0});
+        const posts = await Posts.find({author: username});
         return { status: 200, user: user, posts: posts };
     }
     catch(err){
