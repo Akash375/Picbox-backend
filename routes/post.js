@@ -10,6 +10,11 @@ const uploader = multer({
     },
 });
 
+router.post("/", async (req, res) => {
+    const response = await functions.getPosts(req.body);
+    res.status(response.status).send(response);
+})
+
 router.post("/like", async (req, res) => {
     const response = await functions.likePost(req); 
     res.status(response.status).send(response);

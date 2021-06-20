@@ -1,6 +1,22 @@
-const { Posts, Comments } = require("../db");
+const { Posts, Comments, Users } = require("../db");
 const { upload } = require('./helper')
 
+const getPosts = async (data) =>{
+    try{
+        const { page, limit} = data;
+        const posts = await Posts.find({}, {seen: 0}).skip((page-1)*limit).limit(limit);
+        const response = [];
+        for(let i=0; i<posts.length; i++){
+            const post = posts[i];
+            const user = await Users.findOne({username: post.author}, {profileImg: 1, username: 1});
+            response.push({user, post});
+        }
+        return { status: 200, posts: response};
+    }
+    catch{
+        return { status: 500, message: "Something went wrong!" };
+    }
+}
 
 const likePost = async (req) =>{
     try{
@@ -93,6 +109,7 @@ const editPost = async (req) =>{
 }
 
 module.exports = {
+    getPosts,
     likePost,
     unlikePost,
     addPost,
