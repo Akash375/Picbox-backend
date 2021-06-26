@@ -29,6 +29,10 @@ app.post("/check/username", async (req, res) => {
     res.status(200).send({status: 200, unique});
 })
 
+app.get('/', (req, res) => {
+    res.send('working')
+})
+
 app.listen(process.env.PORT, () => {
     console.log(`server is running on localhost:${process.env.PORT}`);
 })
