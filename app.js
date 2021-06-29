@@ -1,7 +1,6 @@
 const express = require("express");
 const cors = require("cors");
 const dotenv = require("dotenv");
-const firebase = require("./firebase");
 const routes = require("./routes");
 const fs = require('fs');
 
@@ -27,6 +26,10 @@ app.post("/check/username", async (req, res) => {
     const user = await Users.findOne({username: username});
     let unique = user ? false : true;
     res.status(200).send({status: 200, unique});
+})
+
+app.get('/', (req, res) => {
+    res.send('working')
 })
 
 app.listen(process.env.PORT, () => {

@@ -89,10 +89,17 @@ const findUser = async (req) => {
     }
 }
 
+const findUsers = async (req, res) => {
+    const {query} = req.body;
+    const users = await Users.find({ "username": { "$regex": query, "$options": "i" } }, { username: 1, name: 1, profileImg: 1}).limit(10);
+    return users;
+}
+
 module.exports = {
     followUser,
     unfollowUser,
     createUser,
     editUser,
-    findUser
+    findUser,
+    findUsers
 }

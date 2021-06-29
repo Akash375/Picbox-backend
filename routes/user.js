@@ -36,4 +36,9 @@ router.post("/profile", async (req, res) => {
     res.status(response.status).send(response);
 })
 
+router.post('/find', async (req, res) => {
+    const response = await functions.findUsers(req, res);
+    res.send(response);
+})
+
 module.exports = router;
