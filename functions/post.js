@@ -1,19 +1,76 @@
 const { Posts, Comments, Users } = require("../db");
 const { upload } = require('./helper')
+const mongoose = require('mongoose')
+const ObjectId = mongoose.Types.ObjectId
+
+const getPost = async (data) =>{
+    try{
+        const {username, postId} = data;
+        const post = await Posts.aggregate([
+            {
+                $match: { _id: ObjectId(postId) }
+            },
+            {
+                $set: { totalLikes: { $size: "$likes" } }
+            },
+            {
+                $set: { hasLiked: { $in : [ username, "$likes" ]}  }
+            },
+            {
+                $lookup: 
+                {
+                    from: "comments",
+                    localField: "_id",
+                    foreignField: "postId",
+                    as: "comments"
+                }
+            },
+            {
+                $project: { likes: 0, seen: 0}
+            },
+        ]);
+        return { status: 200, post};
+    }
+    catch(err){
+        console.log(err);
+        return { status: 500, message: "Something went wrong!" };
+    }
+}
 
 const getPosts = async (data) =>{
     try{
-        const { page, limit} = data;
-        const posts = await Posts.find({}, {seen: 0}).skip((page-1)*limit).limit(limit);
-        const response = [];
-        for(let i=0; i<posts.length; i++){
-            const post = posts[i];
-            const user = await Users.findOne({username: post.author}, {profileImg: 1, username: 1});
-            response.push({user, post});
-        }
-        return { status: 200, posts: response};
+        const { username, page, limit} = data;
+        const posts = await Posts.aggregate([{
+                $lookup : {
+                    from: "users",
+                    localField: "author",
+                    foreignField: "username",
+                    as: "user"
+                }
+            },
+            {
+                $set: { totalLikes: { $size: "$likes" } }
+            },
+            {
+                $set: { hasLiked: { $in : [ username, "$likes" ]}  }
+            },
+            { $unwind : "$user"},
+            { $set: { profileImg: "$user.profileImg" } },
+            { $skip: (page-1)*limit },
+            { $limit: limit },
+            { $project: { seen: 0, user: 0, likes: 0} }
+        ])
+        //const posts = await Posts.find({}, {seen: 0}).skip((page-1)*limit).limit(limit);
+        // const response = [];
+        // for(let i=0; i<posts.length; i++){
+        //     const post = posts[i];
+        //     const user = await Users.findOne({username: post.author}, {profileImg: 1, username: 1});
+        //     response.push({user, post});
+        // }
+        return { status: 200, posts};
     }
     catch{
+
         return { status: 500, message: "Something went wrong!" };
     }
 }
@@ -109,6 +166,7 @@ const editPost = async (req) =>{
 }
 
 module.exports = {
+    getPost,
     getPosts,
     likePost,
     unlikePost,

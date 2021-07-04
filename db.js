@@ -33,7 +33,7 @@ const postSchema = {
 
 const commentSchema = {
     author: String,
-    postId: String,
+    postId: mongoose.Types.ObjectId,
     time: String,
     comment: String,
     likes: [String] 

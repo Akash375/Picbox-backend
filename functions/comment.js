@@ -1,4 +1,6 @@
-const { Comment } = require("../db");
+const { Comments } = require("../db");
+const mongoose = require('mongoose')
+const ObjectId = mongoose.Types.ObjectId
 
 const editComment = async (req) =>{
     try{
@@ -47,7 +49,7 @@ const addComment = async (req) =>{
         const {postId, hostId, data} = req.body;
         const comment = new Comments({
             author: hostId,
-            postId: postId,
+            postId: ObjectId(postId),
             time: new Date(),
             comment: data,
             likes: []
@@ -55,7 +57,8 @@ const addComment = async (req) =>{
         await comment.save();
         return { status: 200, message: "Comment Added!"};
     }
-    catch{
+    catch(err){
+        console.log(err);
         return { status: 500, message: "Something went wrong!" };
     }
 }

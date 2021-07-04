@@ -15,6 +15,11 @@ router.post("/", async (req, res) => {
     res.status(response.status).send(response);
 })
 
+router.post("/get", async (req,res) => {
+    const response =await functions.getPost(req.body);
+    res.status(response.status).send(response);
+})
+
 router.post("/like", async (req, res) => {
     const response = await functions.likePost(req); 
     res.status(response.status).send(response);
