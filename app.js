@@ -11,7 +11,7 @@ const app=express();
 app.use(express.json());
 
 app.use(cors({
-    origin: 'https://social-media-mern-a00d2.firebaseapp.com',
+    origin: 'https://picbox-2021.web.app',
     credentials: true,
 }));
 
